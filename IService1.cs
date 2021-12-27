@@ -23,6 +23,33 @@ namespace ServiceReservasi
         [OperationContract]
         List<Pemesanan> Pemesanan();
 
+        [OperationContract]
+        string Login(string username, string password);
+
+        [OperationContract]
+        string Register(string username, string password, string kategori);
+
+        [OperationContract]
+        string UpdateRegister(string username, string password, string kategori, int id);
+
+        [OperationContract]
+        string DeleteRegister(string username);
+
+        [OperationContract]
+        List<DataRegister> DataRegist();
+
+    }
+    [DataContract]
+    public class DataRegister
+    {
+        [DataMember(Order = 1)]
+        public int Id { get; set; }
+        [DataMember(Order = 2)]
+        public string Username { get; set; }
+        [DataMember(Order = 3)]
+        public string Password { get; set; }
+        [DataMember(Order = 4)]
+        public string Kategori { get; set; }
     }
     [DataContract]
     public class CekLokasi
@@ -60,7 +87,7 @@ namespace ServiceReservasi
         [DataMember]
         public int JumlahPemesanan { get; set; }
         [DataMember]
-        public string Lokasi { get; set; }
+        public string IDLokasi { get; set; }
     }
 }
 

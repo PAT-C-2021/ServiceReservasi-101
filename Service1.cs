@@ -16,6 +16,120 @@ namespace ServiceReservasi
         SqlConnection conn;
         SqlCommand com;
 
+        public string Register(string username, string password, string kategori)
+        {
+            try
+            {
+                string sql = "INSERT into dbo.Login VALUES('" + username + "', '" + password + "', '" + kategori + "')";
+                conn = new SqlConnection(koneksi);
+                com = new SqlCommand(sql, conn);
+                conn.Open();
+                com.ExecuteNonQuery();
+                conn.Close();
+
+                return "Sukses";
+            }
+            catch (Exception e)
+            {
+                return e.ToString();
+            }
+        }
+
+
+        public string Login(string username, string password)
+        {
+            string kategori = "";
+
+            string sql = "SELECT Kategori from dbo.Login where Username='" + username + "' and Password='" + password + "'";
+            conn = new SqlConnection(koneksi);
+            com = new SqlCommand(sql, conn);
+            conn.Open();
+
+            SqlDataReader reader = com.ExecuteReader();
+            while (reader.Read())
+            {
+                kategori = reader.GetString(0);
+            }
+            conn.Close();
+            return kategori;
+        }
+        public List<DataRegister> DataRegist()
+        {
+            List<DataRegister> list = new List<DataRegister>();
+            try
+            {
+                string sql = "SELECT ID_login, Username, Password, Kategori from Login";
+                conn = new SqlConnection(koneksi);
+                com = new SqlCommand(sql, conn);
+                conn.Open();
+                SqlDataReader reader = com.ExecuteReader();
+                while (reader.Read())
+                {
+                    DataRegister data = new DataRegister();
+                    data.Id = reader.GetInt32(0);
+                    data.Username = reader.GetString(1);
+                    data.Password = reader.GetString(2);
+                    data.Kategori = reader.GetString(3);
+                    list.Add(data);
+
+                }
+                conn.Close();
+            }
+            catch (Exception e)
+            {
+                e.ToString();
+            }
+            return list;
+        }
+        public string DeleteRegister(string username)
+        {
+            try
+            {
+                int id = 0;
+                string sql = "SELECT ID_login from dbo.Login where Username='" + username + "'";
+                conn = new SqlConnection(koneksi);
+                com = new SqlCommand(sql, conn);
+                conn.Open();
+                SqlDataReader reader = com.ExecuteReader();
+                while (reader.Read())
+                {
+                    id = reader.GetInt32(0);
+                }
+                conn.Close();
+
+                string sql2 = "DELETE from dbo.Login where ID_login=" + id + "";
+                conn = new SqlConnection(koneksi);
+                com = new SqlCommand(sql2, conn);
+                conn.Open();
+                com.ExecuteNonQuery();
+                conn.Close();
+
+                return "Berhasil";
+            }
+            catch (Exception e)
+            {
+                return e.ToString();
+            }
+        }
+        public string UpdateRegister(string username, string password, string kategori, int id)
+        {
+            try
+            {
+                string sql2 = "UPDATE dbo.Login set Username='" + username + "', Password='" + password + "',Kategori='" + kategori + "'" +
+                    "where ID_login=" + id + "";
+                conn = new SqlConnection(koneksi);
+                com = new SqlCommand(sql2, conn);
+                conn.Open();
+                com.ExecuteNonQuery();
+                conn.Close();
+
+                return "Sukses";
+            }
+            catch (Exception e)
+            {
+                return e.ToString();
+            }
+        }
         public List<DetailLokasi> DetailLokasi()
         {
             List<DetailLokasi> LokasiFull = new List<DetailLokasi>();
@@ -50,7 +164,7 @@ namespace ServiceReservasi
             List<Pemesanan> pemesanans = new List<Pemesanan>();
             try
             {
-                string sql = "SELECT ID_reservasi, Nama_customer, No_telpon, Jumlah_pemesanan, Nama_lokasi FROM dbo.Pemesanan p join dbo. p.ID_lokasi = l.ID_lokasi";
+                string sql = "SELECT ID_reservasi, Nama_customer, No_telpon, Jumlah_pemesanan, Nama_lokasi FROM dbo.Pemesanan p JOIN dbo.Lokasi l on p.ID_lokasi = l.ID_lokasi";
                 conn = new SqlConnection(koneksi);
                 com = new SqlCommand(sql, conn);
                 conn.Open();
@@ -62,7 +176,7 @@ namespace ServiceReservasi
                     data.NamaCustomer = reader.GetString(1);
                     data.NoTelpon = reader.GetString(2);
                     data.JumlahPemesanan = reader.GetInt32(3);
-                    data.Lokasi = reader.GetString(4);
+                    data.IDLokasi = reader.GetString(4);
                     pemesanans.Add(data);
 
                 }
